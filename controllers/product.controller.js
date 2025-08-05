@@ -1,10 +1,24 @@
-const productDB = require("../config/db");
 const Product_schema = require("../models/product.model");
 
 exports.getAllProducts = async (req, res) => {
+  const { category } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
   try {
-    const products = await Product_schema.find();
-    res.status(200).json(products);
+    let filter = {};
+    if (category) {
+      filter.category = category;
+    }
+    const totalItems = await Product_schema.countDocuments();
+    const products = await Product_schema.find(filter).limit(limit).skip(skip);
+
+    res.status(200).json({
+      TotalPages: Math.ceil(totalItems / limit),
+      totalItems: totalItems,
+      currentPage: page,
+      products,
+    });
   } catch (e) {
     res.status(500).json({ message: "Server Error" });
   }
@@ -34,9 +48,8 @@ exports.createProduct = async (req, res) => {
 
 exports.getProductById = async (req, res) => {
   const productId = req.params.id;
-  console.log(productId);
   try {
-    const product = await Product_schema.findById({ productId });
+    const product = await Product_schema.findById(productId);
     res.status(200).json({ product });
   } catch (e) {
     res.status(500).json({ message: "Server Error!", e });
