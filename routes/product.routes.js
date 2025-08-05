@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/user.controller");
-const verifyToken = require("../middlewares/verifyToken");
+const productController = require("../controllers/product.controller");
+//const verifyToken = require("../middlewares/verifyToken");
 
-router.post("/register", userController.userRegister); //used by auth-service
-router.get("/profile", verifyToken, userController.getUserProfile);
-router.put("/profile", verifyToken, userController.updateUserProfile);
-router.get("/email/:email", userController.getUserByEmail); //used by auth-service
+router.post("/product", productController.createProduct);
+router.get("/products", productController.getAllProducts);
+router.put("/product/:id", productController.updateProduct);
+router.get("/product/:id", productController.getProductById);
+router.delete("/product/:id", productController.deleteProduct);
 
 module.exports = router;
