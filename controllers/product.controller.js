@@ -1,3 +1,4 @@
+const productDB = require("../config/db");
 const Product_schema = require("../models/product.model");
 
 exports.getAllProducts = async (req, res) => {
@@ -23,7 +24,9 @@ exports.createProduct = async (req, res) => {
       stock,
       createdAt,
     });
-    return res.status(201).json("Product Created successfully!");
+    return res
+      .status(201)
+      .json({ message: "Product Created successfully!", product: newProduct });
   } catch (e) {
     res.status(500).send("Server Error!");
   }
@@ -33,7 +36,7 @@ exports.getProductById = async (req, res) => {
   const productId = req.params.id;
   console.log(productId);
   try {
-    const product = await Product_schema.findById({ _id: productId });
+    const product = await Product_schema.findById({ productId });
     res.status(200).json({ product });
   } catch (e) {
     res.status(500).json({ message: "Server Error!", e });
@@ -42,8 +45,6 @@ exports.getProductById = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   const prodId = req.params.id;
-  //const { name, description, price, category, image, stock, createdAt } =
-  //req.body;
   try {
     const updatedProd = await Product_schema.findByIdAndUpdate(
       { _id: prodId },
